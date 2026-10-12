@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "Tabsolution — Saved Tab Names",
+  "version": "1.0.0",
+  "description": "Rename tabs automatically using local exact URL and regular expression rules.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "action": {"default_title": "Rename this tab", "default_popup": "popup.html"},
+  "content_scripts": [{"matches": ["http://*/*", "https://*/*"], "js": ["rules.js", "content.js"], "run_at": "document_idle"}]
+}
