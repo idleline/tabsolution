@@ -20,8 +20,18 @@ function reset() {
 }
 function render() {
   $('rules').replaceChildren();
-  if (!rules.length) { const li = document.createElement('li'); li.textContent = 'No rules yet. Name your first tab above.'; $('rules').append(li); }
-  for (const rule of rules) {
+  const currentOnly = $('rule-scope').value === 'current';
+  const query = $('rule-search').value.trim().toLowerCase();
+  const scoped = currentOnly ? rules.filter(rule => TabRules.findRule([rule], currentTab?.url || '')) : rules;
+  const visible = scoped.filter(rule => `${rule.name} ${rule.value}`.toLowerCase().includes(query));
+  const active = TabRules.findRule(rules, currentTab?.url || '');
+  $('rule-count').textContent = `${visible.length} shown · ${scoped.length} ${currentOnly ? 'matching this tab' : 'total rules'}`;
+  if (!visible.length) {
+    const li = document.createElement('li');
+    li.textContent = !rules.length ? 'No rules yet. Name your first tab above.' : query ? 'No rules match your search.' : 'No rules match this tab. Choose All rules to manage other pages.';
+    $('rules').append(li);
+  }
+  for (const rule of visible) {
     const li = document.createElement('li'), name = document.createElement('strong'), value = document.createElement('div'), actions = document.createElement('div');
     name.textContent = rule.name; value.textContent = `${rule.type === 'exact' ? 'URL' : 'Regex'} · ${rule.value}`; value.className = 'rule-value'; actions.className = 'rule-actions';
     for (const [label, handler] of [['Edit', () => {
@@ -34,6 +44,7 @@ function render() {
     }]]) {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'text-button'; button.textContent = label; button.setAttribute('aria-label', `${label} ${rule.name}`); button.addEventListener('click', handler); actions.append(button);
     }
+    if (rule.id === active?.id) { const badge = document.createElement('span'); badge.className = 'active-badge'; badge.textContent = 'Applies to this tab'; name.append(badge); }
     li.append(name, value, actions); $('rules').append(li);
   }
 }
@@ -57,6 +68,8 @@ $('rule-form').addEventListener('submit', async event => {
 });
 $('cancel').addEventListener('click', () => window.close());
 $('new-rule').addEventListener('click', reset);
+$('rule-scope').addEventListener('change', () => { $('rules').scrollTop = 0; render(); });
+$('rule-search').addEventListener('input', () => { $('rules').scrollTop = 0; render(); });
 document.querySelectorAll('input[name="type"]').forEach(input => input.addEventListener('change', updateType));
 $('pattern').addEventListener('input', preview);
 (async () => {

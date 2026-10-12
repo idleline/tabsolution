@@ -24,6 +24,8 @@ This matches Salesforce subdomains such as `https://example.mce.salesforce.com/d
 
 Rules apply automatically after pages load and are reapplied when sites update their titles. URL changes within single-page apps are checked at least once per second. Exact URLs (including query strings and fragments) take priority; otherwise the first matching regex in the saved list wins. Saving an existing URL/pattern updates it. Use **Edit**, **Delete**, and **New rule** to manage rules. Deleting an active rule restores the latest site title observed or applies the next matching rule.
 
+**Saved rules** defaults to **This tab**, showing all exact URL and regex rules matching the current URL. The winning rule is labeled **Applies to this tab**. Choose **All rules** to manage the full collection. Search filters by name, URL, or pattern within the selected view, preserving rule priority. The list scrolls independently and the popup height is capped. These filters only change the display; all saved rules continue to run.
+
 Rules stay in `chrome.storage.local` in this Chrome profile, across browser restarts; they are not synced or sent anywhere. Uninstalling the extension removes its rules. The extension needs access to HTTP/HTTPS pages to apply saved names automatically, plus storage and scripting access to save rules and apply them to the current tab immediately. Chrome internal pages, the Chrome Web Store, PDFs in Chrome's viewer, and other protected pages cannot be renamed. File URLs are not supported.
 
 After changing extension code, click **Reload** on its card at `chrome://extensions` and reload open website tabs.
